@@ -1,0 +1,2 @@
+#!/bin/sh
+echo '-D MY_WIFI_SSID=\"<YOUR WIFI SSID>\" -D MY_WIFI_PASSWORD=\"<YOUR WIFI PASSWORD>\"'
