@@ -36,7 +36,7 @@ void setup()
   Serial.begin(115200);
   mutex = xSemaphoreCreateMutex();
   delay( 3000 ); // wait for serial monitor
-  Serial.println( "\nESP32 Chip Info - Arduino - Version 1.0.12 by Dr. Thorsten Ludewig" );
+  Serial.println( "\n\n\nESP32 Chip Info - Arduino - Version 1.0.12 by Dr. Thorsten Ludewig" );
   Serial.println( "Build date: " __DATE__ " " __TIME__ "\n");
 
   Serial.printf("Chip Revision (ESP) : %d\n", ESP.getChipRevision());
