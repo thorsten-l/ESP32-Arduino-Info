@@ -6,12 +6,12 @@
 byte mac[6];
 uint64_t chipid;
 
-SemaphoreHandle_t mutex;
+volatile SemaphoreHandle_t mutex;
 
 int getChipRevision()
 {
   return (( REG_READ(EFUSE_BLK0_RDATA3_REG) >>
-            EFUSE_RD_CHIP_VER_RESERVE_S ) && EFUSE_RD_CHIP_VER_RESERVE_V );
+            EFUSE_RD_CHIP_VER_REV1_S ) && EFUSE_RD_CHIP_VER_REV1_V );
 }
 
 void printAsDouble( const char* label, uint32_t value, double divisor, const char* unit )
@@ -51,7 +51,7 @@ void setup()
   Serial.printf("Cycle Count         : %d\n", ESP.getCycleCount());
 
   Serial.println();
-  xTaskCreatePinnedToCore( &secondTask, "secondTask", 1000, NULL, 1, NULL, 0 );
+  xTaskCreatePinnedToCore( &secondTask, "secondTask", 10000, NULL, 1, NULL, 0 );
   delay(50);
   xSemaphoreTake( mutex, portMAX_DELAY );
   Serial.printf("Running core        : %d\n", xPortGetCoreID() );
