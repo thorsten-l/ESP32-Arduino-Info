@@ -8,6 +8,9 @@ uint64_t chipid;
 
 volatile SemaphoreHandle_t mutex;
 
+static int counter;
+static const char* rollingChars = "|/-\\";
+
 int getChipRevision()
 {
   return (( REG_READ(EFUSE_BLK0_RDATA3_REG) >>
@@ -36,7 +39,7 @@ void setup()
   Serial.begin(115200);
   mutex = xSemaphoreCreateMutex();
   delay( 3000 ); // wait for serial monitor
-  Serial.println( "\n\n\nESP32 Chip Info - Arduino - Version 1.0.12 by Dr. Thorsten Ludewig" );
+  Serial.println( "\n\n\nESP32 Chip Info - Arduino - Version 1.0.14 by Dr. Thorsten Ludewig" );
   Serial.println( "Build date: " __DATE__ " " __TIME__ "\n");
 
   Serial.printf("Chip Revision (ESP) : %d\n", ESP.getChipRevision());
@@ -85,9 +88,15 @@ void setup()
 
   Serial.println();
   Serial.printf("SDK Version         : %s\n", ESP.getSdkVersion() );
+  Serial.println();
+  counter = 0;
 }
 
 void loop()
 {
-  delay(10000);
+  Serial.print("\rRunning: ");
+  Serial.print( rollingChars[counter]);
+  counter++;
+  counter %=4 ;
+  delay(1000);
 }
