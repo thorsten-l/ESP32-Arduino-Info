@@ -11,6 +11,11 @@ volatile SemaphoreHandle_t mutex;
 static int counter;
 static const char* rollingChars = "|/-\\";
 
+struct tm timeinfo;
+
+#define TIMEZONE "CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00"
+#define NTP_SERVER "192.168.5.1"
+
 int getChipRevision()
 {
   return (( REG_READ(EFUSE_BLK0_RDATA3_REG) >>
@@ -39,7 +44,7 @@ void setup()
   Serial.begin(115200);
   mutex = xSemaphoreCreateMutex();
   delay( 3000 ); // wait for serial monitor
-  Serial.println( "\n\n\nESP32 Chip Info - Arduino - Version 1.0.14 by Dr. Thorsten Ludewig" );
+  Serial.println( "\n\n\nESP32 Chip Info - Arduino - Version 1.0.15 by Dr. Thorsten Ludewig" );
   Serial.println( "Build date: " __DATE__ " " __TIME__ "\n");
 
   Serial.printf("Chip Revision (ESP) : %d\n", ESP.getChipRevision());
@@ -90,6 +95,23 @@ void setup()
   Serial.printf("SDK Version         : %s\n", ESP.getSdkVersion() );
   Serial.println();
   counter = 0;
+
+  configTzTime( TIMEZONE, NTP_SERVER );
+
+  if (getLocalTime(&timeinfo, 10000))    // wait up to 10sec to sync
+  {
+    Serial.println(&timeinfo, "Time set            : %A %d %B %Y %H:%M:%S");
+    Serial.print( "Timezone            : ");
+    Serial.println( getenv("TZ"));
+  }
+  else
+  {
+    Serial.println("Time not set");
+  }
+
+  getLocalTime(&timeinfo);
+  Serial.println(&timeinfo, "Time                : %Y-%m-%d %H:%M:%S");
+  Serial.println();
 }
 
 void loop()
