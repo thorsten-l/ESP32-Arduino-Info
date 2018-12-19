@@ -1,9 +1,55 @@
+# Private
+build_flags.sh
+
+# PlatformIO
+.pio
 .pioenvs
 .piolibdeps
-.clang_complete
-.gcc-flags.json
-private/build_flags.sh
+
+# Visual Studio Code
 .vscode/.browse.c_cpp.db*
+.vscode/.clang_complete
 .vscode/c_cpp_properties.json
 .vscode/launch.json
-.vscode/settings.json
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Executables
+*.exe
+*.out
+*.app
+
+# macOS
+.DS_Store
+
+# KiCad
+*~
+*.bak
+*-bak
+_autosave*
+rescue-backup/
