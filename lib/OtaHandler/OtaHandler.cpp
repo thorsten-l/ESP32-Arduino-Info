@@ -25,12 +25,14 @@ void InitializeOTA()
 
   .onEnd([]()
   {
+    digitalWrite( BOARD_LED, false );
     Serial.println("\nOTA - Upload finished.");
     Serial.println("\n\n*** restarting system ***\n\n");
   } )
 
   .onProgress([](unsigned int progress, unsigned int total)
   {
+    digitalWrite( BOARD_LED, 1 ^ digitalRead(BOARD_LED));
     Serial.printf("OTA - Progress: %u%%\r", (progress / (total / 100)));
   } )
 

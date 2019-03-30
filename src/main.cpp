@@ -41,6 +41,8 @@ void secondTask( void * parameter )
 
 void setup()
 {
+  pinMode( BOARD_LED, OUTPUT );
+  digitalWrite( BOARD_LED, true );
   Serial.begin(115200);
   mutex = xSemaphoreCreateMutex();
   delay( 3000 ); // wait for serial monitor
@@ -81,11 +83,13 @@ void setup()
 
   while (WiFi.status() != WL_CONNECTED)
   {
+    digitalWrite( BOARD_LED, 1 ^ digitalRead(BOARD_LED));
     delay(500);
     Serial.print(".");
   }
 
   Serial.println(" connected.\n");
+  digitalWrite( BOARD_LED, false );
 
   WiFi.macAddress(mac);
   Serial.printf("WiFi MAC Address    : %02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5] );
