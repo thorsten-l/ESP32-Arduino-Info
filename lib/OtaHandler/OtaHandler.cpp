@@ -55,6 +55,8 @@ void InitializeOTA()
   } );
 
   ArduinoOTA.begin();
+  MDNS.addServiceTxt("_arduino", "_tcp", "fw_name", APP_NAME );
+  MDNS.addServiceTxt("_arduino", "_tcp", "fw_version", APP_VERSION );
 
   Serial.println("Update Over-The-Air : initialized");
 }
