@@ -1,7 +1,9 @@
 #include <Arduino.h>
+#include <App.hpp>
 #include <ESP.h>
 #include <WiFi.h>
 #include "soc/efuse_reg.h"
+#include <OtaHandler.hpp>
 
 byte mac[6];
 uint64_t chipid;
@@ -9,12 +11,10 @@ uint64_t chipid;
 volatile SemaphoreHandle_t mutex;
 
 static int counter;
+static time_t lastTimestamp = 0;
 static const char* rollingChars = "|/-\\";
 
 struct tm timeinfo;
-
-#define TIMEZONE "CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00"
-#define NTP_SERVER "192.168.5.1"
 
 int getChipRevision()
 {
@@ -44,7 +44,7 @@ void setup()
   Serial.begin(115200);
   mutex = xSemaphoreCreateMutex();
   delay( 3000 ); // wait for serial monitor
-  Serial.println( "\n\n\nESP32 Chip Info - Arduino - Version 1.0.15 by Dr. Thorsten Ludewig" );
+  Serial.println( "\n\n\n" APP_NAME " - Version " APP_VERSION " by Dr. Thorsten Ludewig" );
   Serial.println( "Build date: " __DATE__ " " __TIME__ "\n");
 
   Serial.printf("Chip Revision (ESP) : %d\n", ESP.getChipRevision());
@@ -73,7 +73,9 @@ void setup()
   Serial.print("Connecting to WiFi network ");
   delay(500);
 
-  WiFi.begin(MY_WIFI_SSID, MY_WIFI_PASSWORD);
+  WiFi.begin();
+  WiFi.setHostname( OTA_HOSTNAME );
+  WiFi.begin( WIFI_SSID, WIFI_PASS );
   WiFi.setAutoConnect(true);
   WiFi.setAutoReconnect(true);
 
@@ -90,6 +92,8 @@ void setup()
   Serial.printf("WiFi Hostname       : %s\n", WiFi.getHostname());
   Serial.print( "WiFi IP-Address     : " );
   Serial.println( WiFi.localIP() );
+
+  InitializeOTA();
 
   Serial.println();
   Serial.printf("SDK Version         : %s\n", ESP.getSdkVersion() );
@@ -116,9 +120,16 @@ void setup()
 
 void loop()
 {
-  Serial.print("\rRunning: ");
-  Serial.print( rollingChars[counter]);
-  counter++;
-  counter %=4 ;
-  delay(1000);
+  time_t currentTimestamp = millis();
+
+  if (( currentTimestamp - lastTimestamp >= 1000 ))
+  {
+    Serial.print("\rRunning: ");
+    Serial.print( rollingChars[counter]);
+    counter++;
+    counter %=4 ;
+    lastTimestamp = currentTimestamp;
+  }
+
+  ArduinoOTA.handle();
 }
