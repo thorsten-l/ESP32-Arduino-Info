@@ -12,28 +12,22 @@ void InitializeOTA()
   ArduinoOTA
   .onStart([]()
   {
-    String type;
-
-    if (ArduinoOTA.getCommand() == U_FLASH)
-      type = "sketch";
-    else       // U_SPIFFS
-      type = "filesystem";
-
     // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-    Serial.println("\n\nOTA - Start updating " + type);
+    Serial.printf("\n\n[%d] OTA - Start updating %s\n", xPortGetCoreID(), 
+      (ArduinoOTA.getCommand() == U_FLASH) ? "sketch" : "filesystem" );
   } )
 
   .onEnd([]()
   {
     digitalWrite( BOARD_LED, false );
-    Serial.println("\nOTA - Upload finished.");
+    Serial.printf("\n[%d] OTA - Upload finished.\n", xPortGetCoreID() );
     Serial.println("\n\n*** restarting system ***\n\n");
   } )
 
   .onProgress([](unsigned int progress, unsigned int total)
   {
     digitalWrite( BOARD_LED, 1 ^ digitalRead(BOARD_LED));
-    Serial.printf("OTA - Progress: %u%%\r", (progress / (total / 100)));
+    Serial.printf("[%d] OTA - Progress: %u%%\r", xPortGetCoreID(), (progress / (total / 100)));
   } )
 
   .onError([](ota_error_t error)

@@ -34,7 +34,7 @@ void printAsDouble( const char* label, uint32_t value, double divisor, const cha
 void secondTask( void * parameter )
 {
   xSemaphoreTake( mutex, portMAX_DELAY );
-  Serial.printf("Running core        : %d\n", xPortGetCoreID() );
+  Serial.printf("2nd Task core       : %d\n", xPortGetCoreID() );
   xSemaphoreGive( mutex );
   vTaskDelete(NULL);
 }
@@ -69,6 +69,7 @@ void setup()
 
   Serial.println();
 
+  WiFi.disconnect();
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
 
@@ -96,6 +97,12 @@ void setup()
   Serial.printf("WiFi Hostname       : %s\n", WiFi.getHostname());
   Serial.print( "WiFi IP-Address     : " );
   Serial.println( WiFi.localIP() );
+  Serial.print( "WiFi Gateway-IP     : " );
+  Serial.println( WiFi.gatewayIP() );
+  Serial.print( "WiFi Subnetmask     : " );
+  Serial.println( WiFi.subnetMask() );
+  Serial.print( "WiFi DNS Server     : " );
+  Serial.println( WiFi.dnsIP() );
 
   InitializeOTA();
 
@@ -128,7 +135,7 @@ void loop()
 
   if (( currentTimestamp - lastTimestamp >= 1000 ))
   {
-    Serial.print("\rRunning: ");
+    Serial.printf("\r[%d] Running: ", xPortGetCoreID() );
     Serial.print( rollingChars[counter]);
     counter++;
     counter %=4 ;
