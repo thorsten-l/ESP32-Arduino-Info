@@ -43,8 +43,8 @@ void connectWiFi()
 {
   Serial.print("\nConnecting to WiFi network ");
 
-  WiFi.mode(WIFI_STA);
   WiFi.persistent(true);
+  WiFi.mode(WIFI_STA);
   WiFi.setHostname( OTA_HOSTNAME );
   WiFi.begin( WIFI_SSID, WIFI_PASS );
 
@@ -90,9 +90,13 @@ void setup()
   printAsDouble("Flash Chip IDE Size : ", ESP.getFlashChipSize(), 1048576, "MB" );
   printAsDouble("Flash Chip Speed    : ", ESP.getFlashChipSpeed(), 1000000, "MHz" );
   Serial.println();
+  printAsDouble("Heap Size           : ", ESP.getHeapSize(), 1024, "KB" );
   printAsDouble("Free Heap           : ", ESP.getFreeHeap(), 1024, "KB" );
-  Serial.printf("Cycle Count         : %d\n", ESP.getCycleCount());
-
+  printAsDouble("Sketch Size         : ", ESP.getSketchSize(), 1024, "KB" );
+  printAsDouble("Free Sketch Space   : ", ESP.getFreeSketchSpace(), 1024, "KB" );
+  printAsDouble("PSRAM Size          : ", ESP.getPsramSize(), 1024, "KB" );
+  printAsDouble("Free PSRAM          : ", ESP.getFreePsram(), 1024, "KB" );
+  Serial.printf("\nCycle Count         : %d\n", ESP.getCycleCount());
   Serial.println();
   xTaskCreatePinnedToCore( &secondTask, "secondTask", 10000, NULL, 1, NULL, 0 );
   delay(50);
