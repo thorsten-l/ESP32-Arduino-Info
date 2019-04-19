@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <App.hpp>
-#include <ESP.h>
+#include <Esp.h>
 #include <WiFi.h>
 #include "soc/efuse_reg.h"
 #include <OtaHandler.hpp>
