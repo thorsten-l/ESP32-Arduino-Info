@@ -30,6 +30,7 @@ cache:
 
 install:
   - pip install -U platformio
+  - platformio update
 
 before_script:
   - cp ./lib/App/App.hpp.sample ./lib/App/App.hpp
