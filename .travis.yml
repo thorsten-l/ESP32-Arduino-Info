@@ -29,7 +29,10 @@ cache:
     - "~/.platformio"
 
 install:
-    - pip install -U platformio
+  - pip install -U platformio
+
+before_script:
+  - cp ./lib/App/App.hpp.sample ./lib/App/App.hpp
 
 script:
-    - platformio run
+  - platformio run
