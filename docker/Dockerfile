@@ -12,6 +12,11 @@ RUN git clone https://github.com/thorsten-l/ESP32-Arduino-Info.git
 WORKDIR /ESP32-Arduino-Info
 
 RUN cp lib/App/App.hpp.sample lib/App/App.hpp
+RUN /usr/local/bin/platformio run -e lolin32lite
 
-# CMD ["/bin/bash"]
-CMD ["/usr/local/bin/platformio", "run", "-e", "lolin32", "-e", "lolin32lite"]
+COPY ./cmd.sh /
+
+WORKDIR /
+RUN rm -fr /ESP32-Arduino-Info
+
+CMD ["/cmd.sh"]

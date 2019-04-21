@@ -4,6 +4,7 @@
 #include <WiFi.h>
 #include "soc/efuse_reg.h"
 #include <OtaHandler.hpp>
+#include <SdCardHandler.hpp>
 
 byte mac[6];
 uint64_t chipid;
@@ -44,6 +45,7 @@ void connectWiFi()
   Serial.print("\nConnecting to WiFi network ");
 
   WiFi.persistent(true);
+  WiFi.setHostname( OTA_HOSTNAME );
   WiFi.mode(WIFI_STA);
   WiFi.setHostname( OTA_HOSTNAME );
   WiFi.begin( WIFI_SSID, WIFI_PASS );
@@ -96,6 +98,12 @@ void setup()
   printAsDouble("Free Sketch Space   : ", ESP.getFreeSketchSpace(), 1024, "KB" );
   printAsDouble("PSRAM Size          : ", ESP.getPsramSize(), 1024, "KB" );
   printAsDouble("Free PSRAM          : ", ESP.getFreePsram(), 1024, "KB" );
+
+#ifdef BOARD_HAS_SDCARD_SLOT 
+  Serial.println();
+  InitializeSdCard();
+#endif
+ 
   Serial.printf("\nCycle Count         : %d\n", ESP.getCycleCount());
   Serial.println();
   xTaskCreatePinnedToCore( &secondTask, "secondTask", 10000, NULL, 1, NULL, 0 );
