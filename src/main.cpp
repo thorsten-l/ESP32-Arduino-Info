@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <App.hpp>
+#include <SPIFFS.h>
 #include <Esp.h>
 #include <WiFi.h>
 #include "soc/efuse_reg.h"
@@ -84,6 +85,14 @@ void setup()
   Serial.println( "\n\n\n" APP_NAME " - Version " APP_VERSION " by Dr. Thorsten Ludewig" );
   Serial.println( "Build date: " __DATE__ " " __TIME__ "\n");
 
+  if(!SPIFFS.begin(true))
+  {
+    Serial.println("SPIFFS Mount Failed... reboot system");
+    delay( 5000 );
+    ESP.restart();
+    delay( 10000 );
+  }
+
   Serial.printf("Chip Revision (ESP) : %d\n", ESP.getChipRevision());
   Serial.printf("Chip Revision (REG) : %d\n", getChipRevision() );
   Serial.println();
@@ -96,6 +105,10 @@ void setup()
   printAsDouble("Free Heap           : ", ESP.getFreeHeap(), 1024, "KB" );
   printAsDouble("Sketch Size         : ", ESP.getSketchSize(), 1024, "KB" );
   printAsDouble("Free Sketch Space   : ", ESP.getFreeSketchSpace(), 1024, "KB" );
+  printAsDouble("SPIFFS total bytes  : ", SPIFFS.totalBytes(), 1024, "KB" );
+  printAsDouble("SPIFFS used bytes   : ", SPIFFS.usedBytes(), 1024, "KB" );
+  SPIFFS.end();
+
   printAsDouble("PSRAM Size          : ", ESP.getPsramSize(), 1024, "KB" );
   printAsDouble("Free PSRAM          : ", ESP.getFreePsram(), 1024, "KB" );
 
@@ -118,7 +131,11 @@ void setup()
   delay(1000);
 
   connectWiFi();
-  InitializeOTA();
+  #ifndef OTA_DISABLED
+    InitializeOTA();
+  #else
+    Serial.println("Update Over-The-Air : disabled");
+  #endif
 
   Serial.println();
   Serial.printf("SDK Version         : %s\n", ESP.getSdkVersion() );
