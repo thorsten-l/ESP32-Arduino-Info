@@ -117,7 +117,7 @@ void setup()
   InitializeSdCard();
 #endif
  
-  Serial.printf("\nCycle Count         : %d\n", ESP.getCycleCount());
+  Serial.printf("\nCycle Count         : %u\n", ESP.getCycleCount());
   Serial.println();
   xTaskCreatePinnedToCore( &secondTask, "secondTask", 10000, NULL, 1, NULL, 0 );
   delay(50);
