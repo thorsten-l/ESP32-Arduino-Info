@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget unzip git 
  && python -m pip install --upgrade pip setuptools
 
 RUN pip install -U platformio
-RUN pio platform install espressif32@1.8.0 --with-package framework-arduinoespressif32
+RUN pio platform install espressif32@1.11.0 --with-package framework-arduinoespressif32
 
 RUN git clone https://github.com/thorsten-l/ESP32-Arduino-Info.git
 
