@@ -45,8 +45,7 @@ void connectWiFi()
 {
   Serial.print("\nConnecting to WiFi network ");
 
-  WiFi.persistent(true);
-  WiFi.setHostname( OTA_HOSTNAME );
+  WiFi.begin();
   WiFi.mode(WIFI_STA);
   WiFi.setHostname( OTA_HOSTNAME );
   WiFi.begin( WIFI_SSID, WIFI_PASS );
@@ -125,10 +124,9 @@ void setup()
   Serial.printf("Running core        : %d\n", xPortGetCoreID() );
   xSemaphoreGive( mutex );
 
-  WiFi.disconnect();
   WiFi.persistent(false);
-  WiFi.mode(WIFI_OFF);
-  delay(1000);
+  WiFi.disconnect(true);
+  delay(200);
 
   connectWiFi();
   #ifndef OTA_DISABLED
@@ -139,6 +137,10 @@ void setup()
 
   Serial.println();
   Serial.printf("SDK Version         : %s\n", ESP.getSdkVersion() );
+  Serial.printf("PIO Environment     : %s\n", PIOENV );
+  Serial.printf("PIO Platform        : %s\n", PIOPLATFORM );
+  Serial.printf("PIO Framework       : %s\n", PIOFRAMEWORK );
+  Serial.printf("Arduino Board       : %s\n", ARDUINO_BOARD );
   Serial.println();
   counter = 0;
 
