@@ -52,13 +52,13 @@ void connectWiFi()
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    digitalWrite( BOARD_LED, 1 ^ digitalRead(BOARD_LED));
+    digitalWrite( BUILTIN_LED, 1 ^ digitalRead(BUILTIN_LED));
     delay(500);
     Serial.print(".");
   }
 
   Serial.println(" connected.\n");
-  digitalWrite( BOARD_LED, false );
+  digitalWrite( BUILTIN_LED, BOARD_LED_ON );
 
   WiFi.macAddress(mac);
   Serial.printf("WiFi MAC Address    : %02X:%02X:%02X:%02X:%02X:%02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5] );
@@ -76,8 +76,8 @@ void connectWiFi()
 
 void setup()
 {
-  pinMode( BOARD_LED, OUTPUT );
-  digitalWrite( BOARD_LED, true );
+  pinMode( BUILTIN_LED, OUTPUT );
+  digitalWrite( BUILTIN_LED, BOARD_LED_OFF );
   Serial.begin(115200);
   mutex = xSemaphoreCreateMutex();
   delay( 3000 ); // wait for serial monitor
@@ -97,7 +97,7 @@ void setup()
   Serial.println();
   Serial.printf("CPU Frequency       : %dMHz\n", ESP.getCpuFreqMHz() );
   Serial.println();
-  printAsDouble("Flash Chip IDE Size : ", ESP.getFlashChipSize(), 1048576, "MB" );
+  printAsDouble("Flash Chip          : ", ESP.getFlashChipSize(), 1048576, "MB" );
   printAsDouble("Flash Chip Speed    : ", ESP.getFlashChipSpeed(), 1000000, "MHz" );
   Serial.println();
   printAsDouble("Heap Size           : ", ESP.getHeapSize(), 1024, "KB" );
