@@ -11,6 +11,7 @@
 
 #include "soc/efuse_reg.h"
 #include <OtaHandler.hpp>
+#include <WebHandler.hpp>
 #include <SdCardHandler.hpp>
 
 byte mac[6];
@@ -179,11 +180,11 @@ void loop()
 {
   time_t currentTimestamp = millis();
 
-
   if (( currentTimestamp - lastTimestamp >= 1000 ))
   {
     Serial.printf("\r[%d] Running: ", xPortGetCoreID() );
     Serial.print( rollingChars[counter]);
+
 #ifdef HAVE_ETH_IF
     if ( eth_connected )
     {
@@ -198,9 +199,21 @@ void loop()
       connectWiFi();
     }
 #endif
+
     lastTimestamp = currentTimestamp;
     counter++;
     counter %=4 ;
+  }
+
+  if (
+#ifdef HAVE_ETH_IF
+       eth_connected 
+#else
+       WiFi.isConnected() 
+#endif
+     )
+  {
+    webHandler.handle();
   }
 
   ArduinoOTA.handle();
