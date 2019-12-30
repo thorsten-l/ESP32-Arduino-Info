@@ -18,24 +18,26 @@ void NetEventHandler(WiFiEvent_t event)
       break;
 
     case SYSTEM_EVENT_ETH_GOT_IP:
-      Serial.print("\nETH MAC: ");
-      Serial.print(ETH.macAddress());
-      Serial.print(", IPv4: ");
-      Serial.print(ETH.localIP());
-      if (ETH.fullDuplex()) {
-        Serial.print(", FULL_DUPLEX");
-      }
-      Serial.print(", ");
+
+      Serial.printf("\n\nETH Hostname        : %s\n", ETH.getHostname());
+      Serial.print( "ETH MAC-Address     : "); Serial.println(ETH.macAddress());
+      Serial.print( "ETH IP-Address      : " ); 
+      Serial.println(ETH.localIP());
+
+      Serial.print( "ETH Phy             : " ); 
+      Serial.print(( ETH.fullDuplex()) ? "FULL" : "HALF");
+      Serial.print(" DUPLEX, ");
       Serial.print(ETH.linkSpeed());
+
       Serial.println("Mbps");
-
-      Serial.print( "Netmask: " );
-      Serial.print( ETH.subnetMask() );
-
-      Serial.print( ", Gateway: " );
-      Serial.print( ETH.gatewayIP() );
-
+      Serial.print( "ETH Netmask         : " );
+      Serial.println( ETH.subnetMask() );
+      Serial.print( "ETH Gateway         : " );
+      Serial.println( ETH.gatewayIP() );
+      Serial.print( "ETH DNS Server      : " );
+      Serial.println( ETH.dnsIP() );
       Serial.println();
+
       eth_connected = true;
       break;
 
