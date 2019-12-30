@@ -63,18 +63,24 @@ void WebHandler::setup()
           "\"fw_version\":\"%s\","
           "\"build_date\":\"%s\","
           "\"build_time\":\"%s\","
+
+          "\"net_ip_address\":\"%s\","
+          "\"net_gateway_ip\":\"%s\","
+          "\"net_subnet_mask\":\"%s\","
+          "\"net_dns_ip\":\"%s\","
+          "\"net_mac_address\":\"%s\","
+
+#ifdef HAVE_ETH_IF
+          "\"eth_duplex\":\"%s\","
+          "\"eth_link_speed\":%u,"
+#else
 /*
           "\"wifi_ssid\":\"%s\","
-          "\"wifi_reconnect_counter\":%d,"
           "\"wifi_channel\":%d,"
           "\"wifi_phy_mode\":\"%s\","
-          "\"wifi_mac_address\":\"%s\","
-          "\"wifi_hostname\":\"%s\","
-          "\"wifi_ip_address\":\"%s\","
-          "\"wifi_gateway_ip\":\"%s\","
-          "\"wifi_subnet_mask\":\"%s\","
-          "\"wifi_dns_ip\":\"%s\","
 */
+#endif
+
           "\"spiffs_total\":%u,"
           "\"spiffs_used\":%u,"
           "\"free_heap\":%u,"
@@ -104,6 +110,24 @@ void WebHandler::setup()
           APP_VERSION, 
           __DATE__, 
           __TIME__,
+
+#ifdef HAVE_ETH_IF
+          ETH.localIP().toString().c_str(),
+          ETH.gatewayIP().toString().c_str(),
+          ETH.subnetMask().toString().c_str(),
+          ETH.dnsIP().toString().c_str(),
+          ETH.macAddress().c_str(),
+          ( ETH.fullDuplex()) ? "full" : "half",
+          ETH.linkSpeed(),
+#else
+          WiFi.localIP().toString().c_str(),
+          WiFi.gatewayIP().toString().c_str(),
+          WiFi.subnetMask().toString().c_str(),
+          WiFi.dnsIP().toString().c_str(),
+          WiFi.macAddress().c_str(),
+#endif
+
+
 /*
           WIFI_SSID,
           0l, // wifiHandler.getConnectCounter(),
