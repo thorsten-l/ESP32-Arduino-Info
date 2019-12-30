@@ -3,6 +3,12 @@
 #include <SPIFFS.h>
 #include <Esp.h>
 #include <WiFi.h>
+
+#ifdef HAVE_ETH_IF
+#include <ETH.h>
+#include <NetHandler.hpp>
+#endif
+
 #include "soc/efuse_reg.h"
 #include <OtaHandler.hpp>
 #include <SdCardHandler.hpp>
@@ -46,7 +52,7 @@ void connectWiFi()
   Serial.print("\nConnecting to WiFi network ");
 
   WiFi.begin();
-  WiFi.mode(WIFI_STA);
+  // WiFi.mode(WIFI_STA);
   WiFi.setHostname( OTA_HOSTNAME );
   WiFi.begin( WIFI_SSID, WIFI_PASS );
 
@@ -124,11 +130,18 @@ void setup()
   Serial.printf("Running core        : %d\n", xPortGetCoreID() );
   xSemaphoreGive( mutex );
 
-  WiFi.persistent(false);
-  WiFi.disconnect(true);
-  delay(200);
+  WiFi.mode(WIFI_OFF);
+  WiFi.disconnect(true,true);
+  delay(2000);
 
+#ifdef HAVE_ETH_IF
+  WiFi.onEvent(NetEventHandler);
+  ETH.begin();
+  ETH.setHostname(OTA_HOSTNAME);
+#else
   connectWiFi();
+#endif
+
   #ifndef OTA_DISABLED
     InitializeOTA();
   #else
@@ -166,21 +179,30 @@ void loop()
 {
   time_t currentTimestamp = millis();
 
+
   if (( currentTimestamp - lastTimestamp >= 1000 ))
   {
-    bool wifiIsConnected = WiFi.isConnected();
     Serial.printf("\r[%d] Running: ", xPortGetCoreID() );
     Serial.print( rollingChars[counter]);
+#ifdef HAVE_ETH_IF
+    if ( eth_connected )
+    {
+      Serial.print( " connected to Ethernet" ); 
+    }
+#else
+    bool wifiIsConnected = WiFi.isConnected();
     Serial.printf( " and WiFi is%s connected", wifiIsConnected ? "" : " NOT");
-    counter++;
-    counter %=4 ;
-    lastTimestamp = currentTimestamp;
 
     if( wifiIsConnected == false )
     {
       connectWiFi();
     }
+#endif
+    lastTimestamp = currentTimestamp;
+    counter++;
+    counter %=4 ;
   }
 
   ArduinoOTA.handle();
+  delay(25);
 }
