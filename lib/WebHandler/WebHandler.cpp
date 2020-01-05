@@ -13,6 +13,8 @@
 #include <ETH.h>
 #endif
 
+extern time_t startTime;
+
 WebHandler webHandler;
 static WebServer server(80);
 size_t fsTotalBytes;
@@ -44,11 +46,18 @@ void WebHandler::setup()
 
     time_t now = time(nullptr);
 
+    time_t uptime = now - startTime;
+    int uptimeSeconds = uptime % 60;
+    int uptimeMinutes = ( uptime / 60 ) % 60;
+    int uptimeHours = ( uptime / 3600 ) % 24;
+    time_t uptimeDays = ( uptime / 86400 );
+    
     sprintf(buffer,
           "{"
           "\"millis\":%lu,"
           "\"utc\":%lu,"
           "\"utc_ctime\":\"%s\","
+          "\"uptime\":\"%ld days, %d hours, %d minutes, %d seconds\","
           "\"host_name\":\"%s.local\","
           "\"esp_sdk_version\":\"%s\","
           "\"platformio_env\":\"%s\","
@@ -92,6 +101,7 @@ void WebHandler::setup()
           millis(),
           now,
           strtok( ctime(&now), "\n" ),
+          uptimeDays, uptimeHours, uptimeMinutes, uptimeSeconds,
 #ifdef HAVE_ETH_IF
           ETH.getHostname(),
 #else

@@ -23,6 +23,7 @@ static int counter;
 static time_t lastTimestamp = 0;
 static const char* rollingChars = "|/-\\";
 
+time_t startTime;
 struct tm timeinfo;
 
 int getChipRevision()
@@ -171,7 +172,8 @@ void setup()
     Serial.println("Time not set");
   }
 
-  getLocalTime(&timeinfo);
+  startTime = time(nullptr);
+  localtime_r(&startTime, &timeinfo);
   Serial.println(&timeinfo, "Time                : %Y-%m-%d %H:%M:%S");
   Serial.println();
 }
