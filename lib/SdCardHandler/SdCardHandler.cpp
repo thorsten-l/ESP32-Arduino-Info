@@ -9,7 +9,7 @@ void InitializeSdCard()
 {
   sdCardInitialized = false;
 
-  if(!SD_MMC.begin())
+  if (!SD_MMC.begin())
   {
     Serial.println("Card Mount Failed");
     return;
@@ -17,7 +17,7 @@ void InitializeSdCard()
 
   uint8_t cardType = SD_MMC.cardType();
 
-  if(cardType == CARD_NONE)
+  if (cardType == CARD_NONE)
   {
     Serial.println("No SD_MMC card attached");
     return;
@@ -25,17 +25,15 @@ void InitializeSdCard()
 
   Serial.print("SD Card Type        : ");
 
-  if(cardType == CARD_MMC)
+  if (cardType == CARD_MMC)
   {
     Serial.println("MMC");
   }
-  else
-  if(cardType == CARD_SD)
+  else if (cardType == CARD_SD)
   {
     Serial.println("SDSC");
   }
-  else
-  if(cardType == CARD_SDHC)
+  else if (cardType == CARD_SDHC)
   {
     Serial.println("SDHC");
   }
@@ -46,26 +44,27 @@ void InitializeSdCard()
 
   uint64_t cardSize = SD_MMC.cardSize() / (1024 * 1024);
   Serial.printf("SD Card Size        : %lluMB\n", cardSize);
-  Serial.printf("SD Card Total space : %lluMB\n", SD_MMC.totalBytes() / (1024 * 1024));
-  Serial.printf("SD Card Used space  : %lluMB\n", SD_MMC.usedBytes() / (1024 * 1024));
+  Serial.printf("SD Card Total space : %lluMB\n",
+                SD_MMC.totalBytes() / (1024 * 1024));
+  Serial.printf("SD Card Used space  : %lluMB\n",
+                SD_MMC.usedBytes() / (1024 * 1024));
 
   sdCardInitialized = true;
 }
 
-
-void listDir(fs::FS &fs, const char * dirname, uint8_t levels)
+void listDir(fs::FS &fs, const char *dirname, uint8_t levels)
 {
   Serial.printf("Listing directory: %s\n", dirname);
 
   File root = fs.open(dirname);
 
-  if(!root)
+  if (!root)
   {
     Serial.println("Failed to open directory");
     return;
   }
 
-  if(!root.isDirectory())
+  if (!root.isDirectory())
   {
     Serial.println("Not a directory");
     return;
@@ -73,16 +72,16 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels)
 
   File file = root.openNextFile();
 
-  while(file)
+  while (file)
   {
-    if(file.isDirectory())
+    if (file.isDirectory())
     {
       Serial.print("  DIR : ");
       Serial.println(file.name());
 
-      if(levels)
+      if (levels)
       {
-        listDir(fs, file.name(), levels -1);
+        listDir(fs, file.name(), levels - 1);
       }
     }
     else
@@ -99,7 +98,7 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels)
 
 void TestSdCard()
 {
-  if ( sdCardInitialized )
+  if (sdCardInitialized)
   {
     Serial.println();
     listDir(SD_MMC, "/", 0);
@@ -107,6 +106,6 @@ void TestSdCard()
   }
   else
   {
-    Serial.println( "SD Card NOT initialized" );
+    Serial.println("SD Card NOT initialized");
   }
 }

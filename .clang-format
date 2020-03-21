@@ -1,0 +1,8 @@
+# http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+
+BasedOnStyle: Microsoft
+
+IndentWidth: 2
+ColumnLimit: 80
+
+AllowShortFunctionsOnASingleLine: Empty
