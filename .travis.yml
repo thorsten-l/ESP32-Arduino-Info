@@ -31,9 +31,7 @@ cache:
 install:
   - pip install -U platformio
   - platformio update
-
-before_script:
-  - cp ./lib/App/App.hpp.sample ./lib/App/App.hpp
+  - platformio upgrade
 
 script:
-  - platformio run
+  - platformio run -e lolin32 -e lolin32lite -e esp32dev -e heltec_wifi_lora_32 -e esp32cam -e esp32-poe
