@@ -5,13 +5,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget unzip git 
  && python -m pip install --upgrade pip setuptools
 
 RUN pip install -U platformio
-RUN pio platform install espressif32@1.11.0 --with-package framework-arduinoespressif32
+RUN pio platform install espressif32@1.12.4 --with-package framework-arduinoespressif32
 
 RUN git clone https://github.com/thorsten-l/ESP32-Arduino-Info.git
 
 WORKDIR /ESP32-Arduino-Info
 
-RUN cp lib/App/App.hpp.sample lib/App/App.hpp
 RUN /usr/local/bin/platformio run -e lolin32lite
 
 COPY ./cmd.sh /
