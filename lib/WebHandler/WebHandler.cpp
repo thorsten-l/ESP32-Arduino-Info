@@ -13,8 +13,6 @@
 #include <ETH.h>
 #endif
 
-extern time_t startTime;
-
 WebHandler webHandler;
 static WebServer server(80);
 size_t fsTotalBytes;
@@ -45,19 +43,13 @@ void WebHandler::setup()
 
     time_t now = time(nullptr);
 
-    time_t uptime = now - startTime;
-    int uptimeSeconds = uptime % 60;
-    int uptimeMinutes = (uptime / 60) % 60;
-    int uptimeHours = (uptime / 3600) % 24;
-    time_t uptimeDays = (uptime / 86400);
-
     sprintf(
         buffer,
         "{"
         "\"millis\":%lu,"
         "\"utc\":%lu,"
         "\"utc_ctime\":\"%s\","
-        "\"uptime\":\"%ld days, %d hours, %d minutes, %d seconds\","
+        "\"uptime\":\"%s\","
         "\"host_name\":\"%s.local\","
         "\"esp_sdk_version\":\"%s\","
         "\"platformio_env\":\"%s\","
@@ -83,10 +75,11 @@ void WebHandler::setup()
         "\"eth_duplex\":\"%s\","
         "\"eth_link_speed\":%u,"
 #else
-/*
-          "\"wifi_ssid\":\"%s\","
-          "\"wifi_channel\":%d,"
-          "\"wifi_phy_mode\":\"%s\","
+
+        "\"wifi_ssid\":\"%s\","
+        "\"wifi_channel\":%d,"
+        "\"wifi_connect_counter\":%d,"
+/*      "\"wifi_phy_mode\":\"%s\","
 */
 #endif
 
@@ -98,12 +91,11 @@ void WebHandler::setup()
         "\"remote_client_ip\":\"%s\","
         "\"remote_client_port\":%u"
         "}",
-        millis(), now, strtok(ctime(&now), "\n"), uptimeDays, uptimeHours,
-        uptimeMinutes, uptimeSeconds,
+        millis(), now, strtok(ctime(&now), "\n"), appUptime(),
 #ifdef HAVE_ETH_IF
         ETH.getHostname(),
 #else
-          WiFi.getHostname(),
+        WiFi.getHostname(),
 #endif
         ESP.getSdkVersion(), PIOENV, PIOPLATFORM, PIOFRAMEWORK, ARDUINO_BOARD,
         ESP.getEfuseMac(), ESP.getCpuFreqMHz(), ESP.getFlashChipSize(),
@@ -115,11 +107,14 @@ void WebHandler::setup()
         ETH.macAddress().c_str(), (ETH.fullDuplex()) ? "full" : "half",
         ETH.linkSpeed(),
 #else
-          WiFi.localIP().toString().c_str(),
-          WiFi.gatewayIP().toString().c_str(),
-          WiFi.subnetMask().toString().c_str(),
-          WiFi.dnsIP().toString().c_str(),
-          WiFi.macAddress().c_str(),
+        WiFi.localIP().toString().c_str(),
+        WiFi.gatewayIP().toString().c_str(),
+        WiFi.subnetMask().toString().c_str(),
+        WiFi.dnsIP().toString().c_str(),
+        WiFi.macAddress().c_str(),
+        WIFI_SSID,
+        WiFi.channel(),
+        wifiConnectCounter,
 #endif
 
         /*
