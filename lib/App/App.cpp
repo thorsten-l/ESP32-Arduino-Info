@@ -10,7 +10,10 @@
 #include <NetHandler.hpp>
 #endif
 
+#include "soc/soc.h"
 #include "soc/efuse_reg.h"
+#include "soc/rtc_cntl_reg.h"
+
 #include <OtaHandler.hpp>
 #include <SdCardHandler.hpp>
 #include <WebHandler.hpp>
@@ -142,6 +145,8 @@ void appSetup()
   tz.tz_dsttime = 0;
   tz.tz_minuteswest = 0;
   settimeofday(&tv, &tz); // reset clock for correct uptime
+
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
 
 #ifdef BUILTIN_LED
   pinMode(BUILTIN_LED, OUTPUT);
