@@ -48,8 +48,7 @@ const char *appDateTime()
 
 const char *appUptime()
 {
-  time_t now = time(nullptr);
-  time_t uptime = now - appStartTime;
+  time_t uptime = millis() / 1000;
   int uptimeSeconds = uptime % 60;
   int uptimeMinutes = (uptime / 60) % 60;
   int uptimeHours = (uptime / 3600) % 24;
@@ -190,7 +189,7 @@ void appSetup()
 
 #ifdef BOARD_HAS_SDCARD_SLOT
   Serial.println();
-  InitializeSdCard();
+  initializeSdCard();
 #endif
 
   Serial.printf("\nCycle Count         : %u\n", ESP.getCycleCount());
@@ -207,6 +206,18 @@ void appSetup()
 
 #ifdef HAVE_ETH_IF
   WiFi.onEvent(NetEventHandler);
+
+#ifdef NRST
+    pinMode(NRST, OUTPUT);
+    digitalWrite(NRST, 0);
+    delay(200);
+    digitalWrite(NRST, 1);
+    delay(200);
+    digitalWrite(NRST, 0);
+    delay(200);
+    digitalWrite(NRST, 1);
+#endif
+
   ETH.begin();
   ETH.setHostname(OTA_HOSTNAME);
 #else
@@ -249,6 +260,10 @@ void appSetup()
     Serial.println("Time not set");
   }
 
+#ifdef TEST_BUTTONS
+  pinMode( KEY_BUILTIN, INPUT_PULLUP );
+#endif
+
 }
 
 void appLoop()
@@ -272,6 +287,10 @@ void appLoop()
   {
     Serial.printf("\r[%d] Running: ", xPortGetCoreID());
     Serial.print(rollingChars[counter]);
+
+#ifdef TEST_BUTTONS
+    Serial.printf(" %d", digitalRead(KEY_BUILTIN));
+#endif
 
 #ifdef HAVE_ETH_IF
     if (eth_connected)

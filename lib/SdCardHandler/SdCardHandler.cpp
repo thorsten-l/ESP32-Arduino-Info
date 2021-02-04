@@ -5,7 +5,7 @@
 
 bool sdCardInitialized;
 
-void InitializeSdCard()
+void initializeSdCard()
 {
   sdCardInitialized = false;
 
@@ -50,6 +50,8 @@ void InitializeSdCard()
                 SD_MMC.usedBytes() / (1024 * 1024));
 
   sdCardInitialized = true;
+
+  testSdCard();
 }
 
 void listDir(fs::FS &fs, const char *dirname, uint8_t levels)
@@ -96,7 +98,7 @@ void listDir(fs::FS &fs, const char *dirname, uint8_t levels)
   }
 }
 
-void TestSdCard()
+void testSdCard()
 {
   if (sdCardInitialized)
   {

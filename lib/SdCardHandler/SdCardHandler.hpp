@@ -3,7 +3,15 @@
 
 #include <Arduino.h>
 
-extern void InitializeSdCard();
-extern void TestSdCard();
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern void initializeSdCard();
+extern void testSdCard();
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif
