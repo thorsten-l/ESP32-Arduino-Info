@@ -4,8 +4,8 @@ Prints out chip, sdk and wifi information using the *Arduino* framework.
 
 ## Compile requirements
 
-- rename or copy lib/App/App.hpp.sample to lib/App/App.hpp
-  and change &lt;your wifi ssid>, &lt;your wifi password>
+- create a directory named `private` and copy all content from `config` directory into the `private` directory.
+  Edit `private/AppConfig.h` and change &lt;your wifi ssid>, &lt;your wifi password>
   and &lt;your ntp server>
 
 ## Sample Output of an AI-Thinker ESP32-CAM module
