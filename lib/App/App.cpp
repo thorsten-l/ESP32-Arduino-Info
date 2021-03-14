@@ -218,7 +218,11 @@ void appSetup()
     digitalWrite(NRST, 1);
 #endif
 
+#if defined(ETH_ADDR) && defined(ETH_POWER_PIN) && defined(ETH_MDC_PIN) && defined(ETH_MDIO_PIN) && defined(ETH_TYPE) && defined(ETH_CLK_MODE)
+  ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_MDC_PIN, ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE);
+#else
   ETH.begin();
+#endif
   ETH.setHostname(OTA_HOSTNAME);
 #else
   connectWiFi();

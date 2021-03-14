@@ -3,10 +3,6 @@
 
 #include <stdint.h>
 
-#define EXTERNAL_NUM_INTERRUPTS 16
-#define NUM_DIGITAL_PINS        40
-#define NUM_ANALOG_INPUTS       16
-
 #define ETH_CLK_MODE    ETH_CLOCK_GPIO0_IN
 #define ETH_POWER_PIN   16
 #define ETH_TYPE        ETH_PHY_LAN8720
