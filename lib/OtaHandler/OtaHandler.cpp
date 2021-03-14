@@ -8,7 +8,7 @@ void InitializeOTA()
   MDNS.begin(OTA_HOSTNAME);
 
 #ifdef HAVE_ETH_IF
-  MDNS.enableWorkstation(ESP_IF_ETH); // Default is WiFi Station Interface
+  // MDNS.enableWorkstation(ESP_IF_ETH); // Default is WiFi Station Interface
 #endif
 
   ArduinoOTA.setHostname(OTA_HOSTNAME);

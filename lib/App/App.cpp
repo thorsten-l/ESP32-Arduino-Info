@@ -95,7 +95,7 @@ void secondTask(void *parameter)
 
 void connectWiFi()
 {
-  Serial.print("\nConnecting to WiFi network ");
+  Serial.printf("\nConnecting to WiFi network (%s) ", WIFI_SSID );
 
   WiFi.begin();
   // WiFi.mode(WIFI_STA);
