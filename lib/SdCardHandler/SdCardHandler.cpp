@@ -1,7 +1,10 @@
 #include "SdCardHandler.hpp"
 
+#ifdef BOARD_HAS_SDCARD_SLOT
+
 #include <FS.h>
 #include <SD_MMC.h>
+
 
 bool sdCardInitialized;
 
@@ -111,3 +114,5 @@ void testSdCard()
     Serial.println("SD Card NOT initialized");
   }
 }
+
+#endif

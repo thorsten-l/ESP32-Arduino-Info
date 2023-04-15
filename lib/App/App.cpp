@@ -19,6 +19,11 @@
 #include <WebHandler.hpp>
 #include <TelnetStream.h>
 
+#ifdef HAVE_WS2812_LED
+#include <Freenove_WS2812_Lib_for_ESP32.h>
+Freenove_ESP32_WS2812 rgbLED = Freenove_ESP32_WS2812(1, LED_BUILTIN, 0, TYPE_GRB);
+#endif
+
 byte mac[6];
 uint64_t chipid;
 
@@ -69,11 +74,13 @@ void appShowHeader(Stream& out)
   out.printf( "ESP SDK Version: %s\n", ESP.getSdkVersion() );
 }
 
+#if !defined(ESP32S2) && !defined(ESP32S3) && !defined(ESP32C3)
 int getChipRevision()
 {
   return ((REG_READ(EFUSE_BLK0_RDATA3_REG) >> EFUSE_RD_CHIP_VER_REV1_S) &&
           EFUSE_RD_CHIP_VER_REV1_V);
 }
+#endif
 
 void printAsDouble(const char *label, uint32_t value, double divisor,
                    const char *unit)
@@ -102,11 +109,29 @@ void connectWiFi()
   WiFi.setHostname(OTA_HOSTNAME);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
 
+  int toggle = 0;
+
   while (WiFi.status() != WL_CONNECTED)
   {
+     toggle = 1 - toggle;
+
 #ifdef BUILTIN_LED
-    digitalWrite(BUILTIN_LED, 1 ^ digitalRead(BUILTIN_LED));
+    digitalWrite(BUILTIN_LED, toggle);
 #endif
+
+#ifdef HAVE_WS2812_LED
+  if ( toggle )
+  {
+    rgbLED.setLedColorData(0, 0xff, 0xff, 0);
+  }
+  else
+  {
+    rgbLED.setLedColorData(0, 0, 0xff, 0);
+  }
+	rgbLED.show();
+#endif
+
+
     delay(500);
     Serial.print(".");
   }
@@ -114,6 +139,11 @@ void connectWiFi()
   Serial.println(" connected.\n");
 #ifdef BUILTIN_LED
   digitalWrite(BUILTIN_LED, BOARD_LED_ON);
+#endif
+
+#ifdef HAVE_WS2812_LED
+  rgbLED.setLedColorData(0, 0, 0, 0xff);
+	rgbLED.show();
 #endif
 
   wifiConnectCounter++;
@@ -151,9 +181,22 @@ void appSetup()
   pinMode(BUILTIN_LED, OUTPUT);
   digitalWrite(BUILTIN_LED, BOARD_LED_OFF);
 #endif
+
+#ifdef HAVE_WS2812_LED
+  rgbLED.begin();
+  rgbLED.setBrightness(10);
+  rgbLED.setLedColorData(0, 0xff, 0, 0);
+	rgbLED.show();
+#endif
+
   Serial.begin(115200);
   mutex = xSemaphoreCreateMutex();
   delay(3000); // wait for serial monitor
+
+#ifdef HAVE_WS2812_LED
+  rgbLED.setLedColorData(0, 0, 0xff, 0);
+	rgbLED.show();
+#endif
   Serial.println("\n\n\n" APP_NAME " - Version " APP_VERSION
                  " by " APP_AUTHOR );
   Serial.println("Build date: " __DATE__ " " __TIME__ "\n");
@@ -167,14 +210,14 @@ void appSetup()
   }
 
   Serial.printf("Chip Revision (ESP) : %d\n", ESP.getChipRevision());
+#if !defined(ESP32S2) && !defined(ESP32S3) && !defined(ESP32C3)
   Serial.printf("Chip Revision (REG) : %d\n", getChipRevision());
+#endif
   Serial.println();
   Serial.printf("CPU Frequency       : %dMHz\n", ESP.getCpuFreqMHz());
   Serial.println();
-  printAsDouble("Flash Chip          : ", ESP.getFlashChipSize(), 1048576,
-                "MB");
-  printAsDouble("Flash Chip Speed    : ", ESP.getFlashChipSpeed(), 1000000,
-                "MHz");
+  printAsDouble("Flash Chip          : ", ESP.getFlashChipSize(), 1048576, "MB");
+  printAsDouble("Flash Chip Speed    : ", ESP.getFlashChipSpeed(), 1000000, "MHz");
   Serial.println();
   printAsDouble("Heap Size           : ", ESP.getHeapSize(), 1024, "KB");
   printAsDouble("Free Heap           : ", ESP.getFreeHeap(), 1024, "KB");
@@ -194,11 +237,13 @@ void appSetup()
 
   Serial.printf("\nCycle Count         : %u\n", ESP.getCycleCount());
   Serial.println();
+#ifndef ESP32S2
   xTaskCreatePinnedToCore(&secondTask, "secondTask", 10000, NULL, 1, NULL, 0);
   delay(50);
   xSemaphoreTake(mutex, portMAX_DELAY);
   Serial.printf("Running core        : %d\n", xPortGetCoreID());
   xSemaphoreGive(mutex);
+#endif
 
   WiFi.mode(WIFI_OFF);
   WiFi.disconnect(true, true);

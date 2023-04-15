@@ -15,6 +15,10 @@
 
 #define BOARD_LED_OFF (1-BOARD_LED_ON)
 
+#if defined(ARDUINO_LOLIN_C3_MINI)
+#define HAVE_WS2812_LED 1
+#endif
+
 extern void appSetup();
 extern void appLoop();
 extern void appShowHeader(Stream& out);
